@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>DND Fog of War - Player View</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="player">
+<main><div class="canvasWrap"><canvas id="board"></canvas></div></main>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/shared.js"></script>
+<script>
+const canvas = document.getElementById('board');
+const ctx = canvas.getContext('2d');
+function redraw() { fitCanvas(canvas); drawBase(ctx, canvas, 'player', { showGrid: false }); }
+socket.on('state', next => { state = next; fitCanvas(canvas); loadMap(redraw); redraw(); });
+socket.on('tile', ({ row, col, value, updatedAt }) => { if (!state) return; state.fog[row][col] = value; if (updatedAt) state.updatedAt = updatedAt; redraw(); });
+</script>
+</body>
+</html>
